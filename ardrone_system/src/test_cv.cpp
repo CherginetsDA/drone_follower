@@ -9,7 +9,7 @@ int BLUR_SIZE = 0;
 
 cv::Scalar circleColor(255, 255, 255), contourColor(0, 255, 0);
 //cv::Scalar minColor(98, 140, 140), maxColor(218, 255, 255);
-DroneController ctrl(92,51.75, 1, 2, 2, 1280.0, 720.0);
+DroneController ctrl(92,51.75, 1, 2, 2, 0.1, 0.2, 0.2, 1280.0, 720.0);
 
 int main(int argc, char ** argv)
 {
@@ -69,8 +69,9 @@ int main(int argc, char ** argv)
                 std::cout <<"\nTest Lesha's function\n";
                 std::cout<<"x: " << v[0]<<" y: "<<v[1]<<" z: "<<v[2]<<" rad: "<<v[3]<<"\n";
                 std::vector<double> desVector={1,0,0};
+                std::vector<double> desDiffVector={0,0,0};
                 std::cout <<"\nTest Vlad's function\n";
-                std::vector<float> s = ctrl.getVectorControl(v,ar.rotxyz()[0],ar.rotxyz()[1],desVector);
+                std::vector<float> s = ctrl.getVectorControl(v,ar.rotxyz()[0],ar.rotxyz()[1],desDiffVector, desVector);
                 std::cout<<"x: " << s[0]<<" y: "<<s[1]<<" z: "<<s[2]<<" zz: "<<s[3]<<"\n";
                 std::cout <<"------------------------\n";
                  // ar.drone_move(s[0],s[1],s[2],0);

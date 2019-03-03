@@ -8,8 +8,9 @@ int BLUR_SIZE = 0;
 
 cv::Scalar circleColor(255, 255, 255), contourColor(0, 255, 0);
 //cv::Scalar minColor(98, 140, 140), maxColor(218, 255, 255);
-DroneController ctrl(92, 51.75, 0.15, 0.4, 0.4 , 1280.0, 720.0);
+DroneController ctrl(92, 51.75, 0.15, 0.4, 0.4 ,0.01, 0.01, 0.01, 1280.0, 720.0);
 std::vector<double> desVector={1,0,0};
+std::vector<double> desDiffVector={0,0,0};
 
 int main(int argc, char **argv){
 	float x,y,z,zz;
@@ -22,7 +23,7 @@ int main(int argc, char **argv){
     std::vector<double> v;
     std::vector<float> s;
     ros::Publisher circlePublisher = nh.advertise<ar_cv::CircleInfo>("/ar_cv/circle_info", 8);
-	
+
 	// Configure camera work
     // Work modes::
     // 1 |  from Image      (set imagePath)
@@ -51,13 +52,13 @@ int main(int argc, char **argv){
         info.workMode = 2;      // Config for web camera
     else info.workMode = 3;     // Config for topic
 
-    std::vector<ar_cv::CircleInfo> circles;   
+    std::vector<ar_cv::CircleInfo> circles;
     SimpleCV cv(nh, info, freq);
-    cv::Mat image; 
+    cv::Mat image;
 	while (ros::ok()) {
 	image = cv.getImage().clone();
         if (!image.empty()) {
-        
+
             // Recognize circle with some accurancy
             circles = findCircles(image, minColor, maxColor, accurancy,
                 DILATION_SIZE, BLUR_SIZE, circleColor, contourColor);
@@ -65,7 +66,7 @@ int main(int argc, char **argv){
             if (circles.size() > 0){
                 circlePublisher.publish(circles[0]);
                 v =getCircleInfoForControl(circles[0]);
-                s = ctrl.getVectorControl(v,0,0,desVector);
+                s = ctrl.getVectorControl(v,0,0,desDiffVector,desVector);
                 ar.drone_move(s[0],s[1],s[2],0);
             } else {
             	ar.drone_move(0,0,0,0);
